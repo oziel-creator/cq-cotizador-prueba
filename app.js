@@ -450,3 +450,12 @@ if (q.get("info")) { const b = $$(".step.on .opt-i")[+q.get("info") - 1]; if (b)
 updateSide(); waLinks();
 let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => document.body.classList.contains("show-res") && updateResult(), 150); });
 if (q.get("agenda")) { openAgenda(); if (q.get("agenda") === "ok") { agDay = 2; agSlot = 2; buildDays(); $("#agNombre").value = "Ana López (ejemplo)"; agSuccess("Ana"); } else if (q.get("agenda") === "lleno") { agSlot = 2; buildDays(); $("#agNombre").value = "Ana López (ejemplo)"; $("#agTel").value = "33 0000 0000 (ejemplo)"; $("#agCol").value = "Col. Centro (ejemplo)"; } }
+
+// menú móvil
+(() => {
+  const b = $("#menuBtn"), m = $("#mnav"); if (!b || !m) return;
+  const set = open => { m.hidden = !open; b.setAttribute("aria-expanded", open); b.setAttribute("aria-label", open ? "Cerrar menú" : "Abrir menú"); };
+  b.addEventListener("click", () => set(m.hidden));
+  m.addEventListener("click", e => { if (e.target.closest("a,button")) set(false); });
+  if (new URLSearchParams(location.search).get("menu") === "1") set(true);
+})();

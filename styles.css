@@ -594,9 +594,23 @@ textarea:focus{border-color:var(--ink)}
 .wf .hero-wa{color:#222}
 .nav a,.top-act .btn{white-space:nowrap}
 @media (max-width:1320px){.nav a{padding:0 10px}.top-in{gap:16px}}
-@media (max-width:1240px){.nav{display:none}.top-act{margin-left:auto}}
 .st{min-width:0}.st-b{min-width:0}
 @media (max-width:1100px) and (min-width:721px){.st-b{font-size:13px;gap:6px;padding:6px 4px 10px}}
 @media (max-width:380px){.top-in{gap:8px}.brand{gap:8px;min-width:0;flex:1 1 auto}.top .wordmark small{display:none}.top .wordmark b{font-size:15px}.top-act{gap:6px}}
 .fc-up{text-transform:uppercase;letter-spacing:1.2px;font-weight:800;font-size:11px}
 .hero-contacto{letter-spacing:1px;font-weight:800}
+/* ---------- nav con pastilla activa + menú móvil ---------- */
+.nav a{letter-spacing:1px;font-size:14px;font-weight:700}
+.nav a.on{background:var(--ink);color:var(--paper);border-radius:999px;padding:0 18px}
+.nav a.on:hover{background:var(--ink);color:var(--paper)}
+.btn-cita{white-space:nowrap}
+.btn-menu{display:none}
+.mnav{display:flex;flex-direction:column;gap:4px;padding:10px 20px 18px;border-top:1px solid var(--line);background:var(--paper)}
+.mnav[hidden]{display:none!important}
+.mnav a{min-height:48px;display:flex;align-items:center;padding:0 16px;border-radius:12px;text-decoration:none;font-weight:700;letter-spacing:1px;color:var(--ink2)}
+.mnav a.on{background:var(--ink);color:var(--paper)}
+.mnav .btn{margin-top:8px}
+@media (max-width:1100px){.btn-menu{display:inline-flex}}
+@media (max-width:720px){.btn-cita{display:none}}
+@media (min-width:1101px){.mnav{display:none!important}}
+.wf .nav a.on,.wf .mnav a.on{background:#222;color:#fff}
