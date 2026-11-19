@@ -1,0 +1,43 @@
+/* Modo wireframe gris (?modo=wireframe): mismo layout, sin color ni ilustraciones */
+.wf{
+ --paper:#EEEEEE; --surf:#FFFFFF; --stone:#F5F5F5; --stone2:#E8E8E8; --line:#D6D6D6; --line2:#BDBDBD;
+ --ink:#222222; --ink2:#333333; --muted:#666666; --faint:#9A9A9A;
+ --oak:#9A9A9A; --oak-d:#777; --walnut:#555555; --gold:#888; --gold-l:#DADADA; --gold-t:#555555; --gold-bg:#E8E8E8;
+ --ok:#444; --ok-bg:#E8E8E8; --err:#222; --err-bg:#F5F5F5;
+ --btn:#1A8CFF; --btn-t:#fff; --btn-h:#1478DD; --wa:#555; --wa-h:#444;
+ --shadow:none; --shadow-l:none;
+ --f-h:"Inter",Arial,sans-serif; --f-b:"Inter",Arial,sans-serif;
+ --plan-bg:#FAFAFA; --plan-room:#BDBDBD; --plan-b:#CFCFCF; --plan-a:#EEEEEE; --plan-t:#FFFFFF; --plan-x:#666;
+}
+.wf body{background:#EEEEEE}
+.wf .hero{background:#E8E8E8}
+.wf .hero h1 em{color:inherit;font-style:normal}
+.wf .hero h1,.wf .sec-h h2,.wf .wa-band h2,.wf .taller h2,.wf .cta-in h2,.wf .step legend,.wf .price-v,.wf .wordmark b{font-weight:700;letter-spacing:-.5px}
+.wf .art{background:#E0E0E0 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 36'%3E%3Ccircle cx='15' cy='11' r='5' fill='%23BDBDBD'/%3E%3Cpath d='M0 36 L16 17 L26 28 L34 20 L48 36Z' fill='%23BDBDBD'/%3E%3C/svg%3E") center/18% auto no-repeat}
+.wf .art>svg{display:none}
+.wf .art-tag{background:#fff;color:#555}
+.wf .mono-bg{fill:#CFCFCF}.wf .mono-t{fill:#555}.wf .mono-l{stroke:#999}
+.wf .btn-gold{background:#fff;color:#222;border-color:#BDBDBD}
+.wf .btn-wa,.wf .fab{background:#fff;color:#222;border:1.5px solid #222}
+.wf .btn-wa:hover{background:#F5F5F5}
+.wf .cta-final{background:#D6D6D6;color:#222}
+.wf .cta-in h2{color:#222}.wf .cta-in p{color:#555}
+.wf .btn-ghost-inv{color:#222;border-color:#999}
+.wf .demo-bar{background:#BDBDBD;color:#222}
+.wf .lay .cab,.wf .sw-f{fill:#CFCFCF;stroke:#888}
+.wf .opt input:checked+.opt-in,.wf .opt.is-sel .opt-in{background:#F5F5F5;box-shadow:0 0 0 1.5px #222 inset}
+.wf .sw rect[fill],.wf .sw path[stroke]{filter:grayscale(1)}
+.wf .sw{filter:grayscale(1)}
+.wf .p-ic{box-shadow:0 0 0 8px #F5F5F5}
+.wf .tag{background:#E8E8E8;color:#444}
+.wf .fab{box-shadow:none}
+.wf .price{border-color:#BDBDBD}
+.wf .k-logo.inv{background:#444}
+@media (max-width:720px){.wf .wordmark b{font-size:15px;letter-spacing:-.3px}.wf .wordmark small{font-size:9px}}
+.wf .fm-up.gloss{fill:#CFCFCF}.wf .sheen{stroke:#fff}
+.wf .hl{fill:#9A9A9A;fill-opacity:.45;stroke:#555}
+.wf .glow{fill:#BDBDBD}
+.wf .led{stroke:#555}
+.wf .opt-p{background:#E8E8E8;color:#333}
+.wf .muebles li{background:#F5F5F5}
+.wf .vest{background:#E8E8E8}
