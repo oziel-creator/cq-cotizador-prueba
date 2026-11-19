@@ -16,28 +16,22 @@ const PRECIOS = {
     formica:     { unidad: "m2", min: 2400,  max: 4800,  nombre: "Cubierta de fórmica" },  // ≈ $1,500–$3,000 por ml (63 cm de fondo)
     cuarzo:      { unidad: "m2", min: 12700, max: 22200, nombre: "Cubierta de cuarzo" }    // ≈ $8,000–$14,000 por ml
   },
-  salpicadera: {
-    formica:     { unidad: "m2", min: 1800,  max: 3500,  nombre: "Salpicadera de fórmica" },
+  salpicadera: { // el material sigue a la cubierta: cuarzo → salpicadera de cuarzo; fórmica → backsplash de PVC
+    formica:     { unidad: "m2", min: 900,   max: 1800,  nombre: "Backsplash de PVC" },
     cuarzo:      { unidad: "m2", min: 9000,  max: 16000, nombre: "Salpicadera de cuarzo" }
   },
-  bisagraLenta:  { unidad: "ml", min: 900,   max: 1800,  nombre: "Bisagras cierre lento" },   // por ml de gabinete (inf + sup)
-  correderaLenta:{ unidad: "u",  min: 1100,  max: 2200,  nombre: "Correderas cierre lento" },  // por cajón
-  altoBrillo:    { unidad: "u",  min: 900,   max: 1600,  nombre: "Alto brillo en superiores" },// por puerta superior
-  luzLed:        { unidad: "ml", min: 650,   max: 1200,  nombre: "Luz LED bajo superiores" },
-  spots:         { unidad: "u",  min: 450,   max: 850,   nombre: "Spots de iluminación" },
+  bisagraLenta:  { unidad: "ml", min: 900,   max: 1800,  nombre: "Bisagras cierre lento premium" },   // por ml de gabinete (inf + sup)
+  correderaLenta:{ unidad: "u",  min: 1100,  max: 2200,  nombre: "Correderas cierre lento premium" },  // por cajón
+  altoBrillo:    { unidad: "u",  min: 900,   max: 1600,  nombre: "Superiores en alto brillo" },  // por puerta superior
+  luzLed:        { unidad: "ml", min: 650,   max: 1200,  nombre: "Luz LED en gabinetes superiores" },
   plafonDeco:    { unidad: "ml", min: 1200,  max: 2200,  nombre: "Plafón decorativo" },
-  plafonSup:     { unidad: "ml", min: 900,   max: 1700,  nombre: "Plafón sobre superiores" },
+  plafonBarra:   { unidad: "m2", min: 3000,  max: 5500,  nombre: "Plafón sobre barra" },   // largo × ancho (estándar 0.40 m)
   extraTipo: {   // estructura adicional (costados terminados, volados, soportes) — por pieza
     isla:        { unidad: "u", min: 6000, max: 12000, nombre: "Isla: costados y estructura" },
     barra:       { unidad: "u", min: 4000, max: 8000,  nombre: "Barra: volado y soportes" },
     contrabarra: { unidad: "u", min: 5000, max: 10000, nombre: "Contrabarra: barra elevada" },
     dual:        { unidad: "u", min: 6000, max: 12000, nombre: "Dual: segundo frente" }
   },
-  accesorios: {  // precio de referencia por pieza, IVA incluido (sin marcas)
-    basurero:    { unidad: "u", min: 9277.68,  max: 9277.68,  nombre: "Basurero doble extraíble 450 mm" },
-    especiero:   { unidad: "u", min: 2317.68,  max: 2317.68,  nombre: "Especiero/botellero extraíble 150 mm" },
-    giratoria:   { unidad: "u", min: 11597.68, max: 11597.68, nombre: "Giratoria de esquina 3 cuadrantes" }
-  }
 };
 /* SUPUESTOS para convertir metros lineales en piezas y áreas (confirmar con Ventas): */
 const SUPUESTOS = {
@@ -45,23 +39,24 @@ const SUPUESTOS = {
   altoSalpicadera: 0.55,      // m entre cubierta y gabinetes superiores
   mlPorPuertaSuperior: 0.5,   // ~1 puerta superior cada 0.5 ml
   cajonesPorMl: 2.5,          // ~1 cajonera de 3 cajones cada 1.2 ml de inferior
-  mlPorSpot: 1.0, spotsMin: 2 // ~1 spot por ml de cocina, mínimo 2
+  anchoPlafonBarra: 0.40,     // m — plafón sobre barra: ancho estándar
+  plafonManual: { largo: 1.20, ancho: 0.40 } // m — medida estándar sugerida si no hay barra
 };
-const WHATSAPP_VENTAS = "528139924992"; // WhatsApp ventas Cocinas Quintana: 81 3992 4992
+/* Los precios por concepto NUNCA se muestran al cliente: solo el rango total. */
+const WHATSAPP_VENTAS = "528125405806"; // Número de prueba; cambiar al WhatsApp de ventas 81 3992 4992 al publicar
 
 const NOMBRES = {
   tipo: { lineal: "Lineal", u: "En U", paralela: "Paralela", escuadra: "En escuadra (L)", isla: "Con isla", barra: "Con barra", contrabarra: "Contrabarra", dual: "Dual" },
-  acabado: { mate: "Mate", brillo: "Alto brillo" },
-  extra: { led: "Luz LED", spots: "Spots", plafdec: "Plafón decorativo", plafsup: "Plafón sobre superiores", salpi: "Salpicadera" },
-  acc: { basurero: "Basurero doble", especiero: "Especiero", giratoria: "Giratoria de esquina" },
+  extra: { led: "Luz LED en superiores", brillo: "Superiores en alto brillo", plafdec: "Plafón decorativo", plafbarra: "Plafón sobre barra", salpi: "Salpicadera" },
   cubierta: { formica: "Fórmica", cuarzo: "Cuarzo" },
-  herraje: { normal: "Normal", lento: "Cierre lento" },
+  herraje: { normal: "Normal", lento: "Cierre lento premium" },
   alcance: { inf: "Solo inferior", sup: "Solo superior", ambas: "Inferior y superior" }
 };
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const q = new URLSearchParams(location.search);
-const S = { tipo: null, cubierta: null, herraje: null, alcance: null, acabado: null, extras: [], acc: [], largo: null, ancho: null, alto: null, fotos: [], paso: 0, max: 0, vista: "top" };
-const GROUPS = ["tipo", "cubierta", "herraje", "alcance", "acabado"], LAST = 5;
+const S = { tipo: null, cubierta: null, herraje: null, alcance: null, extras: [], plafL: 120, plafA: 40, largo: null, ancho: null, alto: null, fotos: [], paso: 0, max: 0, vista: "top" };
+const GROUPS = ["tipo", "cubierta", "herraje", "alcance"], LAST = 5;
+const CON_BARRA = ["barra", "contrabarra", "dual"]; // tipos que llevan barra
 const mxn = n => "$" + Math.round(n).toLocaleString("es-MX");
 const r500 = n => Math.round(n / 500) * 500, r1k = n => Math.round(n / 1000) * 1000;
 
@@ -72,7 +67,13 @@ function metros() {
   const muro = { lineal: A, escuadra: A + B - d, u: A + 2 * (B - d), paralela: 2 * A, isla: A, barra: A, contrabarra: A, dual: A + B - d }[S.tipo] || A;
   const libre = { isla, barra: pen, contrabarra: cb, dual: Math.min(A * 0.5, 2) }[S.tipo] || 0;
   const altos = S.tipo === "paralela" ? A : muro;   // en paralela, superiores solo en una pared
-  return { muro, libre, bajos: muro + libre, altos };
+  const barra = CON_BARRA.includes(S.tipo) ? libre : 0;
+  return { muro, libre, barra, bajos: muro + libre, altos };
+}
+function plafon() { // plafón sobre barra: si hay barra, mismo largo que la barra; si no, medida capturada (estándar 40 × 120 cm)
+  const m = metros();
+  if (m.barra > 0) return { l: m.barra, a: SUPUESTOS.anchoPlafonBarra, auto: true };
+  return { l: (S.plafL || 120) / 100, a: (S.plafA || 40) / 100, auto: false };
 }
 function precio() {
   const P = PRECIOS, U = SUPUESTOS, m = metros(), inf = S.alcance !== "sup", sup = S.alcance !== "inf", has = k => S.extras.includes(k);
@@ -87,13 +88,11 @@ function precio() {
     if (inf) { const c = Math.round(m.bajos * U.cajonesPorMl); add(P.correderaLenta, c, `${c} pzas`, "base"); }
   }
   if (inf && P.extraTipo[S.tipo]) add(P.extraTipo[S.tipo], 1, "1 pza", "base");
-  if (sup && S.acabado === "brillo") { const c = Math.ceil(m.altos / U.mlPorPuertaSuperior); add(P.altoBrillo, c, `${c} puertas`, "extra"); }
+  if (sup && has("brillo")) { const c = Math.ceil(m.altos / U.mlPorPuertaSuperior); add(P.altoBrillo, c, `${c} puertas`, "extra"); }
   if (sup && has("led")) add(P.luzLed, m.altos, `${f1(m.altos)} ml`, "extra");
-  if (has("spots")) { const c = Math.max(U.spotsMin, Math.round(m.muro / U.mlPorSpot)); add(P.spots, c, `${c} pzas`, "extra"); }
   if (has("plafdec")) add(P.plafonDeco, m.muro, `${f1(m.muro)} ml`, "extra");
-  if (sup && has("plafsup")) add(P.plafonSup, m.altos, `${f1(m.altos)} ml`, "extra");
+  if (has("plafbarra")) { const d = plafon(); add(P.plafonBarra, d.l * d.a, `${d.l.toFixed(2)} × ${d.a.toFixed(2)} m${d.auto ? " (igual que la barra)" : ""}`, "extra"); }
   if (inf && has("salpi") && S.cubierta) { const a = m.muro * U.altoSalpicadera; add(P.salpicadera[S.cubierta], a, `${a.toFixed(2)} m²`, "extra"); }
-  S.acc.forEach(k => add(P.accesorios[k], 1, "1 pza", "acc"));
   const min = rows.reduce((t, r) => t + r.min, 0), max = rows.reduce((t, r) => t + r.max, 0);
   const pkg = S.cubierta === "cuarzo" && S.herraje === "lento" ? "Paquete Premium" : S.cubierta === "formica" && S.herraje === "normal" ? "Paquete Básica" : "Paquete combinado";
   return { m, inf, sup, rows, min: r1k(min), max: r1k(max), pkg };
@@ -167,6 +166,7 @@ function drawTop(svg, compact) {
       }
     }
     if (r.side && !compact) { const cx = X(r.x + r.w / 2), cy = Y(r.y + r.h / 2); lab(gL, cx + (r.x === 0 ? L(r.w) / 2 + 40 : -L(r.w) / 2 - 44), cy, r.side, fs, r.h > r.w ? 0 : 0); if (!horiz) {} }
+    if (r.name && S.extras.includes("plafbarra") && CON_BARRA.includes(tipo) && !compact) gU.appendChild(el("rect", { x: X(r.x) - 4, y: Y(r.y) - 4, width: L(r.w) + 8, height: L(r.h) + 8, rx: 4, fill: "var(--gold)", "fill-opacity": .18, stroke: "var(--gold-t)", "stroke-dasharray": "6 4", "stroke-width": 1.5 }));
     if (r.name) lab(gL, X(r.x + r.w / 2), Y(r.y + r.h / 2) + 5, r.name, compact ? 24 : 16 * k, 0, true);
     if (r.stools) {
       const k = r.stools === "s" ? Math.max(2, Math.floor(r.w / .6)) : Math.max(2, Math.floor(r.h / .6));
@@ -241,12 +241,11 @@ function drawFront(svg) {
   // acabados y extras (resaltados)
   const has = k => S.extras.includes(k), cw2 = tall ? A - st : A, topU = Math.min(Ht - .05, 2.25), hl = { fill: "var(--gold)", "fill-opacity": .28, stroke: "var(--gold-t)", "stroke-dasharray": "4 3" };
   const tag = (x, y, t) => lab(g, x, y, t, 12 * k);
-  if (inf && has("salpi")) { g.insertBefore(el("rect", { x: X(0), y: Y(1.5), width: L(cw2), height: L(.56), ...hl }), g.children[1]); tag(X(cw2 * .78), Y(1.22), "Salpicadera"); }
+  if (has("plafbarra") && metros().barra > 0) tag(X(A * .5), Y(Ht) + 16 * k, "Plafón sobre barra (ver vista superior)");
+  if (inf && has("salpi")) { g.insertBefore(el("rect", { x: X(0), y: Y(1.5), width: L(cw2), height: L(.56), ...hl }), g.children[1]); tag(X(cw2 * .78), Y(1.22), S.cubierta === "formica" ? "Backsplash PVC" : "Salpicadera"); }
   if (sup && has("led")) { g.appendChild(el("path", { d: `M${X(0)} ${Y(1.5)}h${L(cw2)}l-${L(.12)} ${L(.5)}H${X(.12)}z`, fill: "var(--gold-l)", opacity: .45 })); g.appendChild(el("line", { x1: X(0), y1: Y(1.5) + 2, x2: X(cw2), y2: Y(1.5) + 2, stroke: "var(--gold)", "stroke-width": 4, "stroke-linecap": "round" })); tag(X(cw2 * .22), Y(1.38), "Luz LED"); }
-  if (sup && has("plafsup") && Ht - topU > .04) { g.appendChild(el("rect", { x: X(0), y: Y(Ht), width: L(A), height: L(Ht - topU), ...hl })); tag(X(A * .3), Y((Ht + topU) / 2) + 4, "Plafón sobre superiores"); }
   if (has("plafdec")) { g.appendChild(el("rect", { x: X(-.15), y: Y(Ht), width: L(A + .3), height: L(.1), fill: "var(--gold)", "fill-opacity": .45 })); tag(X(A * .72), Y(Ht) - 12, "Plafón decorativo"); }
-  if (has("spots")) for (let i = 0; i < Math.max(2, Math.round(A)); i++) { const x = X((i + .5) * A / Math.max(2, Math.round(A))); g.appendChild(el("path", { d: `M${x - 5} ${Y(Ht) + 4}h10l${L(.18)} ${L(.5)}h-${L(.36) + 10}z`, fill: "var(--gold-l)", opacity: .35 })); g.appendChild(el("circle", { cx: x, cy: Y(Ht) + 4, r: 5, fill: "var(--gold)" })); }
-  if (sup && S.acabado === "brillo") for (let i = 0; i < n; i++) { if (i === iE || (tall && i === n - 1)) continue; const x = X(i * st); g.appendChild(el("path", { d: `M${x + L(.1)} ${Y(1.55)}l${L(.25)} -${L(.55)}M${x + L(.25)} ${Y(1.55)}l${L(.18)} -${L(.4)}`, stroke: "#fff", "stroke-width": 3, opacity: .8 })); }
+  if (sup && has("brillo")) for (let i = 0; i < n; i++) { if (i === iE || (tall && i === n - 1)) continue; const x = X(i * st); g.appendChild(el("path", { d: `M${x + L(.1)} ${Y(1.55)}l${L(.25)} -${L(.55)}M${x + L(.25)} ${Y(1.55)}l${L(.18)} -${L(.4)}`, stroke: "#fff", "stroke-width": 3, opacity: .8 })); }
   // cotas
   g.appendChild(el("text", { x: X(A / 2), y: base + 34 * k, "text-anchor": "middle", "font-size": 14 * k, "font-weight": 700, fill: "var(--ink2)" }, "Largo " + A.toFixed(2) + " m"));
   g.appendChild(el("line", { x1: X(0) - 30, y1: Y(0), x2: X(0) - 30, y2: Y(Ht), stroke: "var(--faint)" }));
@@ -259,40 +258,50 @@ function handle(g, x, y, vert) { g.appendChild(el("line", vert ? { x1: x, y1: y 
 /* ---------- interfaz ---------- */
 const steps = $$(".step"), stEls = $$(".st"), nextBtn = $("#nextBtn"), prevBtn = $("#prevBtn"), hint = $("#cfgHint");
 function valid(i) {
-  if (i === 4) return S.alcance === "inf" || !!S.acabado;   // sin superiores, el acabado no aplica
+  if (i === 4) return true;   // extras opcionales
   if (i < LAST) return !!S[GROUPS[i]];
   return ["largo", "ancho", "alto"].every(k => S[k] >= .5 && S[k] <= 12);
 }
 const ARROW = `<svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`;
-function go(i) {
+function scrollToStep() { // lleva el inicio del paso (tarjeta del configurador) arriba de la pantalla, debajo del encabezado fijo
+  const card = $("#cfgForm"), head = $(".top");
+  const off = (head ? head.getBoundingClientRect().height : 0) + 12;
+  const y = card.getBoundingClientRect().top + window.scrollY - off;
+  window.scrollTo({ top: Math.max(0, y), behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+}
+function go(i, scroll) {
   S.paso = Math.max(0, Math.min(LAST, i)); S.max = Math.max(S.max, S.paso);
   steps.forEach((s, k) => s.classList.toggle("on", k === S.paso));
   stEls.forEach((s, k) => { s.classList.toggle("cur", k === S.paso); s.classList.toggle("done", k !== S.paso && valid(k)); $("button", s).disabled = k > S.max && !valid(k - 1); });
   $("#stepNum").textContent = S.paso + 1; $("#progBar").style.width = ((S.paso + 1) / (LAST + 1) * 100) + "%";
   prevBtn.disabled = S.paso === 0;
   refreshNav();
+  if (scroll) requestAnimationFrame(scrollToStep);
 }
 function refreshNav() {
   const ok = valid(S.paso), last = S.paso === LAST;
   nextBtn.innerHTML = (last ? "Ver mi cotización preliminar " : "Siguiente ") + ARROW;
   nextBtn.disabled = !ok;
-  hint.textContent = ok ? (last ? "¡Listo! Ya puedes ver tu precio estimado" : "Puedes cambiar tu elección cuando quieras") : (last ? "Escribe largo, ancho y alto (en metros)" : S.paso === 4 ? "Elige el acabado de las puertas superiores" : "Elige una opción para continuar");
+  hint.textContent = ok ? (last ? "¡Listo! Ya puedes ver tu precio estimado" : "Puedes cambiar tu elección cuando quieras") : (last ? "Escribe largo, ancho y alto (en metros)" : "Elige una opción para continuar");
 }
-function syncExtras() { // los extras de superiores no aplican si solo hay parte inferior (y viceversa)
+function syncExtras() { // extras de superiores no aplican con solo parte inferior (y la salpicadera requiere cubierta)
   const soloInf = S.alcance === "inf", soloSup = S.alcance === "sup";
   $$("#cfgForm .opt").forEach(o => {
-    const inp = $("input", o), off = (soloInf && ((inp.name === "extra" && ["led", "plafsup"].includes(inp.value)) || (inp.name === "acabado" && inp.value === "brillo"))) || (soloSup && inp.name === "extra" && inp.value === "salpi");
+    const inp = $("input", o), off = inp.name === "extra" && ((soloInf && ["led", "brillo"].includes(inp.value)) || (soloSup && inp.value === "salpi"));
     o.classList.toggle("is-dis", off); inp.disabled = off;
-    if (off && inp.checked) { inp.checked = false; if (inp.name === "acabado") S.acabado = null; }
+    if (off && inp.checked) inp.checked = false;
     let n = $(".opt-na", o); if (off && !n) { n = document.createElement("small"); n.className = "opt-na"; n.textContent = soloInf ? "Requiere gabinetes superiores" : "Requiere gabinetes inferiores"; $(".opt-txt", o).appendChild(n); } else if (!off && n) n.remove();
   });
   S.extras = $$('#cfgForm input[name=extra]:checked').map(i => i.value);
-  S.acc = $$('#cfgForm input[name=acc]:checked').map(i => i.value);
+  // salpicadera: material según cubierta
+  const sm = $("#salpiMat"); if (sm) sm.textContent = S.cubierta === "cuarzo" ? "Con tu cubierta de cuarzo: salpicadera de cuarzo" : S.cubierta === "formica" ? "Con tu cubierta de fórmica: backsplash de PVC" : "Material: según tu cubierta";
+  // plafón sobre barra: automático si hay barra, medidas si no
+  const pc = $("#plafCfg"); if (pc) { const on = S.extras.includes("plafbarra"), m = metros(); pc.hidden = !on; $("#plafAuto").hidden = !(m.barra > 0); $("#plafMan").hidden = m.barra > 0; $("#plafAutoV").textContent = m.barra.toFixed(2) + " m"; }
 }
 function updateSide() {
-  const ex = [S.acabado && NOMBRES.acabado[S.acabado], ...S.extras.map(k => NOMBRES.extra[k]), ...S.acc.map(k => NOMBRES.acc[k])].filter(Boolean);
+  const ex = S.extras.map(k => NOMBRES.extra[k]);
   const rows = [["Tipo", S.tipo && NOMBRES.tipo[S.tipo]], ["Cubierta", S.cubierta && NOMBRES.cubierta[S.cubierta]], ["Herraje", S.herraje && NOMBRES.herraje[S.herraje]], ["Alcance", S.alcance && NOMBRES.alcance[S.alcance]],
-    ["Acabados", (S.acabado || (S.alcance === "inf" && S.max >= 4)) ? (!ex.length ? "Sin extras" : ex.length > 2 ? ex.slice(0, 2).join(", ") + ` +${ex.length - 2}` : ex.join(", ")) : null],
+    ["Extras", (S.max >= 4) ? (!ex.length ? "Sin extras" : ex.length > 2 ? ex.slice(0, 2).join(", ") + ` +${ex.length - 2}` : ex.join(", ")) : null],
     ["Medidas", valid(LAST) ? `${S.largo.toFixed(2)} × ${S.ancho.toFixed(2)} × ${S.alto.toFixed(2)} m` : null]];
   $("#selList").innerHTML = rows.map(([k, v]) => `<li class="${v ? "ok" : ""}"><span class="dot">${v ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>' : ""}</span><span class="k">${k}</span><span class="v ${v ? "" : "empty"}">${v || "Sin elegir"}</span></li>`).join("");
   const mv = $("#mlVal"); if (mv) { const m = metros(); mv.innerHTML = S.tipo && S.largo ? `Tu cocina: <b>≈ ${m.bajos.toFixed(1)} ml</b> de gabinete inferior${S.alcance !== "inf" ? ` y <b>${m.altos.toFixed(1)} ml</b> superior` : ""}` : "Escribe el largo para calcular tus metros lineales"; }
@@ -305,34 +314,38 @@ function updateResult() {
   S.vista === "front" ? drawFront(sv) : drawTop(sv);
   $("#priceV").textContent = `${mxn(p.min)} – ${mxn(p.max)}`;
   $("#pkg").textContent = p.pkg; $("#mlTot").textContent = `${p.m.bajos.toFixed(1)} ml`;
-  const G = { base: "Cocina", extra: "Acabados y extras", acc: "Accesorios" };
-  let html = "", last = "";
-  p.rows.forEach(r => { if (r.grupo !== last) { html += `<tr class="grp"><td colspan="2">${G[r.grupo]}</td></tr>`; last = r.grupo; }
-    html += `<tr><td>${r.nombre}<small>${r.txt}</small></td><td>${r.min === r.max ? mxn(r.min) : mxn(r100(r.min)) + " – " + mxn(r100(r.max))}</td></tr>`; });
-  if (!p.inf) html += `<tr class="na"><td>Gabinetes inferiores y cubierta</td><td>No incluye</td></tr>`;
-  if (!p.sup) html += `<tr class="na"><td>Gabinetes superiores</td><td>No incluye</td></tr>`;
-  $("#brk").innerHTML = html;
-  const ex = [...S.extras.map(k => NOMBRES.extra[k]), ...S.acc.map(k => NOMBRES.acc[k])];
+  // solo se muestra el rango total; nunca el costo por concepto
+  $("#incl").innerHTML = p.rows.map(r => `<li>${r.nombre}<small>${r.txt}</small></li>`).join("") + (!p.inf ? `<li class="na">Sin gabinetes inferiores ni cubierta</li>` : "") + (!p.sup ? `<li class="na">Sin gabinetes superiores</li>` : "");
+  const ex = S.extras.map(k => k === "salpi" ? (S.cubierta === "cuarzo" ? "Salpicadera de cuarzo" : "Backsplash de PVC") : NOMBRES.extra[k]);
   $("#summ").innerHTML = [["Tipo de cocina", NOMBRES.tipo[S.tipo]], ["Cubierta", NOMBRES.cubierta[S.cubierta] + (p.inf ? "" : " (no aplica)")], ["Herraje", NOMBRES.herraje[S.herraje]], ["Alcance", NOMBRES.alcance[S.alcance]],
-    ["Superiores", p.sup ? NOMBRES.acabado[S.acabado] || "—" : "No aplica"], ["Extras", ex.length ? ex.join(", ") : "Ninguno"],
+    ["Extras", ex.length ? ex.join(", ") : "Ninguno"],
     ["Medidas", `${S.largo.toFixed(2)} × ${S.ancho.toFixed(2)} × ${S.alto.toFixed(2)} m`], ["Fotos", S.fotos.length ? S.fotos.length + " adjunta(s)" : "Sin fotos"]].map(([a, b]) => `<dt>${a}</dt><dd>${b}</dd>`).join("");
   waLinks();
 }
 const r100 = n => Math.round(n / 100) * 100;
+function resumenTexto() {
+  if (!S.tipo) return "";
+  const ex = S.extras.map(k => k === "salpi" ? (S.cubierta === "cuarzo" ? "salpicadera de cuarzo" : "backsplash de PVC") : NOMBRES.extra[k].toLowerCase());
+  const p = valid(LAST) && S.cubierta && S.herraje && S.alcance ? precio() : null;
+  return `\nMi configuración: cocina ${NOMBRES.tipo[S.tipo]}` + (S.cubierta ? `, cubierta de ${NOMBRES.cubierta[S.cubierta].toLowerCase()}` : "") + (S.herraje ? `, herraje ${NOMBRES.herraje[S.herraje].toLowerCase()}` : "") +
+    (S.alcance ? `, ${NOMBRES.alcance[S.alcance].toLowerCase()}` : "") + (ex.length ? `, extras: ${ex.join(", ")}` : "") + (S.largo ? `, medidas ${S.largo} × ${S.ancho || "?"} × ${S.alto || "?"} m` : "") +
+    (p ? `.\nRango estimado: ${mxn(p.min)} – ${mxn(p.max)}` : "") + ".";
+}
 function waLinks() {
-  const t = S.tipo ? `Hola, quiero cotizar una cocina ${NOMBRES.tipo[S.tipo]}${S.largo ? " de " + S.largo + " m" : ""}. Es un proyecto personalizado.` : "Hola, tengo un proyecto de cocina muy personalizado.";
-  $$("[data-wa]").forEach(a => { a.href = `https://wa.me/${WHATSAPP_VENTAS}?text=${encodeURIComponent(t)}`; a.target = "_blank"; a.rel = "noopener"; });
-  $$("[data-wa-v]").forEach(a => { a.href = `https://wa.me/${WHATSAPP_VENTAS}?text=${encodeURIComponent("Hola, quiero cotizar un vestidor a la medida.")}`; a.target = "_blank"; a.rel = "noopener"; });
+  const url = t => `https://wa.me/${WHATSAPP_VENTAS}?text=${encodeURIComponent(t)}`;
+  $$("[data-wa]").forEach(a => { a.href = url("Hola, quiero informes de una cocina." + (a.dataset.wa === "res" || document.body.classList.contains("show-res") ? resumenTexto() : "")); a.target = "_blank"; a.rel = "noopener"; });
+  $$("[data-wa-v]").forEach(a => { a.href = url("Hola, quiero informes de un vestidor a la medida."); a.target = "_blank"; a.rel = "noopener"; });
 }
 function showResult(scroll) { document.body.classList.add("show-res"); $("#sideNote").innerHTML = "✓ Tu precio estimado está listo abajo. Si cambias algo, se actualiza solo."; updateResult(); if (scroll) $("#resultado").scrollIntoView({ behavior: "smooth" }); }
 
 // selección de tarjetas
 $$("#cfgForm input[type=radio]").forEach(inp => inp.addEventListener("change", () => {
-  S[inp.name] = inp.value; if (inp.name === "alcance") syncExtras(); updateSide(); refreshNav(); go(S.paso);
+  S[inp.name] = inp.value; syncExtras(); waLinks(); updateSide(); refreshNav(); go(S.paso);
   if (document.body.classList.contains("show-res")) updateResult();
-  if (S.paso < 4) setTimeout(() => { if (valid(S.paso) && inp.name === GROUPS[S.paso]) go(S.paso + 1); }, 380);
+  if (S.paso < 4) setTimeout(() => { if (valid(S.paso) && inp.name === GROUPS[S.paso]) go(S.paso + 1, true); }, 380);
 }));
-$$("#cfgForm input[type=checkbox]").forEach(inp => inp.addEventListener("change", () => { syncExtras(); updateSide(); if (document.body.classList.contains("show-res")) updateResult(); }));
+$$("#cfgForm input[type=checkbox]").forEach(inp => inp.addEventListener("change", () => { syncExtras(); updateSide(); waLinks(); if (document.body.classList.contains("show-res")) updateResult(); }));
+[["plafLargo", "plafL"], ["plafAncho", "plafA"]].forEach(([id, k]) => { const i = $("#" + id); if (i) i.addEventListener("input", () => { const v = parseFloat(i.value); S[k] = v > 0 ? v : null; if (document.body.classList.contains("show-res")) updateResult(); }); });
 // (i) más información: no selecciona la tarjeta
 $$(".opt-i").forEach(b => {
   const t = e => { e.preventDefault(); e.stopPropagation(); const o = b.classList.contains("open"); $$(".opt-i.open").forEach(x => x.classList.remove("open")); b.classList.toggle("open", !o); };
@@ -346,12 +359,12 @@ document.addEventListener("click", () => $$(".opt-i.open").forEach(x => x.classL
   i.addEventListener("blur", () => f.classList.toggle("is-err", i.value !== "" && !(S[k] >= .5 && S[k] <= 12)));
 });
 nextBtn.addEventListener("click", () => {
-  if (S.paso < LAST) return go(S.paso + 1);
+  if (S.paso < LAST) return go(S.paso + 1, true);
   nextBtn.classList.add("is-load"); nextBtn.innerHTML = `<svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3a9 9 0 1 0 9 9"/></svg> Calculando…`;
   setTimeout(() => { nextBtn.classList.remove("is-load"); refreshNav(); showResult(true); }, 700);
 });
-prevBtn.addEventListener("click", () => go(S.paso - 1));
-$$("[data-goto]").forEach(b => b.addEventListener("click", () => { go(+b.dataset.goto); if (b.classList.contains("btn-link")) $("#configurador").scrollIntoView({ behavior: "smooth" }); }));
+prevBtn.addEventListener("click", () => go(S.paso - 1, true));
+$$("[data-goto]").forEach(b => b.addEventListener("click", () => go(+b.dataset.goto, true)));
 $$(".seg button").forEach(b => b.addEventListener("click", () => { $$(".seg button").forEach(x => x.classList.toggle("on", x === b)); S.vista = b.dataset.view; updateResult(); }));
 
 // fotos
@@ -417,9 +430,8 @@ function agSuccess(name) {
    ?demo=1 llena el configurador con datos de ejemplo · ?paso=1..5 · ?vista=frontal
    ?tipo=isla · ?agenda=1 | ?agenda=ok · ?modo=wireframe · ?tema=oscuro            */
 if (q.get("demo")) {
-  Object.assign(S, { tipo: q.get("tipo") || "escuadra", cubierta: q.get("cubierta") || "cuarzo", herraje: q.get("herraje") || "lento", alcance: q.get("alcance") || "ambas", acabado: q.get("acabado") || "brillo", largo: 3.6, ancho: 2.4, alto: 2.4, max: LAST });
-  (q.get("extras") ?? "led,salpi").split(",").filter(Boolean).forEach(v => { const i = $(`input[name=extra][value=${v}]`); if (i) i.checked = true; });
-  (q.get("acc") ?? "basurero").split(",").filter(Boolean).forEach(v => { const i = $(`input[name=acc][value=${v}]`); if (i) i.checked = true; });
+  Object.assign(S, { tipo: q.get("tipo") || "escuadra", cubierta: q.get("cubierta") || "cuarzo", herraje: q.get("herraje") || "lento", alcance: q.get("alcance") || "ambas", largo: 3.6, ancho: 2.4, alto: 2.4, max: LAST });
+  (q.get("extras") ?? "led,brillo,salpi").split(",").filter(Boolean).forEach(v => { const i = $(`input[name=extra][value=${v}]`); if (i) i.checked = true; });
   if (q.get("paso") !== "vacio") {
     $("#largo").value = "3.60"; $("#ancho").value = "2.40"; $("#alto").value = "2.40";
     $("#notas").value = "Quiero espacio para refrigerador de 90 cm. (ejemplo)";
