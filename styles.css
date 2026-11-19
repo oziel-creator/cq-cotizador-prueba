@@ -615,3 +615,5 @@ textarea:focus{border-color:var(--ink)}
 @media (min-width:1101px){.mnav{display:none!important}}
 .wf .nav a.on,.wf .mnav a.on{background:#222;color:#fff}
 .wordmark b{letter-spacing:1.2px}
+.f-card{align-items:center;align-content:center;min-height:90px}
+.f-card.f-solo b{grid-row:span 2;align-self:center}
