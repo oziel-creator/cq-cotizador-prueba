@@ -1,11 +1,11 @@
 /* ==========================================================
-   Cocinas Quintana — lógica del configurador (prototipo)
+   DOMUS MAGNA — lógica del configurador (prototipo)
    Todo lo que hay aquí es DE EJEMPLO: precios, horarios y teléfono.
    ========================================================== */
 
 /* ---------- TABLA DE PRECIOS — ESTIMADOS DE REFERENCIA ----------
    Estimaciones de mercado (investigadas el 18-nov-2026, MXN, IVA incluido).
-   NO son precios oficiales de Cocinas Quintana: Ventas debe confirmarlos antes de publicar.
+   NO son precios oficiales de DOMUS MAGNA: Ventas debe confirmarlos antes de publicar.
    Calibración: Paquete Básica (fórmica + herraje normal) ≈ $14,000–$20,000 por ml de cocina completa;
                 Paquete Premium (cuarzo + cierre lento)  ≈ $25,000–$40,000 por ml.
    Cada concepto tiene su unidad: "ml" (metro lineal), "u" (pieza), "m2" (metro cuadrado).          */
@@ -333,8 +333,8 @@ function resumenTexto() {
 }
 function waLinks() {
   const url = t => `https://wa.me/${WHATSAPP_VENTAS}?text=${encodeURIComponent(t)}`;
-  $$("[data-wa]").forEach(a => { a.href = url("Hola, quiero informes de una cocina." + (a.dataset.wa === "res" || document.body.classList.contains("show-res") ? resumenTexto() : "")); a.target = "_blank"; a.rel = "noopener"; });
-  $$("[data-wa-v]").forEach(a => { a.href = url("Hola, quiero informes de un vestidor a la medida."); a.target = "_blank"; a.rel = "noopener"; });
+  $$("[data-wa]").forEach(a => { a.href = url("Hola DOMUS MAGNA, quiero informes de una cocina." + (a.dataset.wa === "res" || document.body.classList.contains("show-res") ? resumenTexto() : "")); a.target = "_blank"; a.rel = "noopener"; });
+  $$("[data-wa-v]").forEach(a => { a.href = url("Hola DOMUS MAGNA, quiero informes de un vestidor a la medida."); a.target = "_blank"; a.rel = "noopener"; });
 }
 function showResult(scroll) { document.body.classList.add("show-res"); $("#sideNote").innerHTML = "✓ Tu precio estimado está listo abajo. Si cambias algo, se actualiza solo."; updateResult(); if (scroll) $("#resultado").scrollIntoView({ behavior: "smooth" }); }
 

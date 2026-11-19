@@ -1,5 +1,5 @@
 /* ==========================================================
-   Cocinas Quintana — página de inicio (prototipo)
+   DOMUS MAGNA — página de inicio (prototipo)
    Paleta: madera cálida, hueso, grises, acentos carbón y dorado
    Temas: claro (por defecto) · .dark (oscuro) · .wf (wireframe gris, ver wireframe.css)
    ========================================================== */
@@ -614,3 +614,4 @@ textarea:focus{border-color:var(--ink)}
 @media (max-width:720px){.btn-cita{display:none}}
 @media (min-width:1101px){.mnav{display:none!important}}
 .wf .nav a.on,.wf .mnav a.on{background:#222;color:#fff}
+.wordmark b{letter-spacing:1.2px}
